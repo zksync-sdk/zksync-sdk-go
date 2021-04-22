@@ -1,7 +1,7 @@
 package zkscrypto
 
 /*
-#cgo LDFLAGS: -L${SRCDIR}/libs -lzks_crypto
+#cgo LDFLAGS: -lzks_crypto
 
 #include "zks_crypto.h"
 */
