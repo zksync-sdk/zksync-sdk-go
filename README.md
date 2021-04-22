@@ -12,8 +12,20 @@
 
 ## Installation
 
-* import github.com/zksync-sdk/zksync-sdk-go
-* Download libzkscrypto for your platorm from https://github.com/zksync-sdk/zksync-crypto-c/releases and put it into `./libs` directory
+* Import package to your project (use flag `-d` to prevent compiling attempt):
+  
+  `go get -d github.com/zksync-sdk/zksync-sdk-go`
+* Download binary library for your platform from https://github.com/zksync-sdk/zksync-crypto-c/releases, change downloaded file name to `libzks-crypto` (but keep original file extension) and put it into `./libs` directory of your project
+* Build project, using `CGO_LDFLAGS="-L./libs"` environment variable:
+  
+  `CGO_LDFLAGS="-L./libs" go build`
+  
+  or just export it for current environment:
+  
+  ```
+  $ export CGO_LDFLAGS="-L./libs"
+  $ go build
+  ```
 
 
 ## License
