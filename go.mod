@@ -1,3 +1,3 @@
-module github.com/matter-labs/zksync-sdk/go/zkscrypto
+module github.com/zksync-sdk/zksync-sdk-go
 
 go 1.15

@@ -4,7 +4,7 @@ import (
 	"encoding/hex"
 	"log"
 
-	"github.com/matter-labs/zksync-sdk/go/zkscrypto"
+	"github.com/zksync-sdk/zksync-sdk-go"
 )
 
 func main() {
