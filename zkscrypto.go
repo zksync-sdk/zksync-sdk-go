@@ -13,10 +13,11 @@ import (
 )
 
 var (
-	errSeedLen      = errors.New("given seed is too short, length must be greater than 32")
-	errPrivateKey   = errors.New("error on private key generation")
-	errSignedMsgLen = errors.New("musig message length must not be larger than 92")
-	errSign         = errors.New("error on sign message")
+	errSeedLen       = errors.New("given seed is too short, length must be greater than 32")
+	errPrivateKey    = errors.New("error on private key generation")
+	errPrivateKeyLen = errors.New("raw private key must be exactly 32 bytes")
+	errSignedMsgLen  = errors.New("musig message length must not be larger than 92")
+	errSign          = errors.New("error on sign message")
 )
 
 func init() {
@@ -45,6 +46,19 @@ func NewPrivateKey(seed []byte) (*PrivateKey, error) {
 	}
 	data := unsafe.Pointer(&pointer.data)
 	return &PrivateKey{data: C.GoBytes(data, C.PRIVATE_KEY_LEN)}, nil
+}
+
+// NewPrivateKeyRaw create private key from raw bytes
+func NewPrivateKeyRaw(pk []byte) (*PrivateKey, error) {
+	if len(pk) != C.PRIVATE_KEY_LEN {
+		return nil, errPrivateKeyLen
+	}
+	return &PrivateKey{data: pk}, nil
+}
+
+// GetBytes return private key raw bytes
+func (pk *PrivateKey) GetBytes() []byte {
+	return pk.data
 }
 
 // Sign message with musig Schnorr signature scheme
