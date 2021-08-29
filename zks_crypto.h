@@ -36,10 +36,20 @@
  */
 #define PUBLIC_KEY_LEN 32
 
+/**
+ * Maximum byte length of the rescue hash.
+ */
+#define RESCUE_HASH_LEN 31
+
 typedef enum MUSIG_SIGN_RES {
   MUSIG_SIGN_OK = 0,
   MUSIG_SIGN_MSG_TOO_LONG,
 } MUSIG_SIGN_RES;
+
+typedef enum MUSIG_VERIFY_RES {
+  MUSIG_VERIFY_OK = 0,
+  MUSIG_VERIFY_FAILED,
+} MUSIG_VERIFY_RES;
 
 typedef enum PRIVATE_KEY_FROM_SEED_RES {
   PRIVATE_KEY_FROM_SEED_OK = 0,
@@ -57,6 +67,10 @@ typedef enum PUBLIC_KEY_FROM_PRIVATE_RES {
   PUBLIC_KEY_FROM_PRIVATE_OK = 0,
 } PUBLIC_KEY_FROM_PRIVATE_RES;
 
+typedef struct ZksResqueHash {
+  uint8_t data[RESCUE_HASH_LEN];
+} ZksResqueHash;
+
 typedef struct ZksPrivateKey {
   uint8_t data[PRIVATE_KEY_LEN];
 } ZksPrivateKey;
@@ -72,6 +86,8 @@ typedef struct ZksPubkeyHash {
 typedef struct ZksSignature {
   uint8_t data[PACKED_SIGNATURE_LEN];
 } ZksSignature;
+
+void rescue_hash_orders(const uint8_t *msg, size_t msg_len, ZksResqueHash *hash);
 
 /**
  * Initializes thread local storage of the parameters used for calculations.
@@ -102,5 +118,10 @@ MUSIG_SIGN_RES zks_crypto_sign_musig(const ZksPrivateKey *private_key,
                                      const uint8_t *msg,
                                      size_t msg_len,
                                      ZksSignature *signature_output);
+
+MUSIG_VERIFY_RES zks_crypto_verify_musig(const uint8_t *msg,
+                                         size_t msg_len,
+                                         const ZksPackedPublicKey *public_key,
+                                         const ZksSignature *signature);
 
 #endif /* ZKS_CRYPTO_H */
