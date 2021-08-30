@@ -19,3 +19,8 @@ type PublicKeyHash struct {
 type Signature struct {
 	data []byte
 }
+
+// ResqueHash represents a resque hash of orders
+type ResqueHash struct {
+	data []byte
+}

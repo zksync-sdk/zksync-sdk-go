@@ -35,7 +35,7 @@ func NewPrivateKey(seed []byte) (*PrivateKey, error) {
 	pointer := C.struct_ZksPrivateKey{}
 	rawSeed := C.CBytes(seed)
 	defer C.free(rawSeed)
-	result := C.zks_crypto_private_key_from_seed((*C.uint8_t)(rawSeed), C.ulong(len(seed)), &pointer)
+	result := C.zks_crypto_private_key_from_seed((*C.uint8_t)(rawSeed), C.size_t(len(seed)), &pointer)
 	if result != 0 {
 		switch result {
 		case 1:
@@ -70,7 +70,7 @@ func (pk *PrivateKey) Sign(message []byte) (*Signature, error) {
 		privateKeyC.data[i] = C.uint8_t(pk.data[i])
 	}
 	signatureC := C.struct_ZksSignature{}
-	result := C.zks_crypto_sign_musig(&privateKeyC, (*C.uint8_t)(rawMessage), C.ulong(len(message)), &signatureC)
+	result := C.zks_crypto_sign_musig(&privateKeyC, (*C.uint8_t)(rawMessage), C.size_t(len(message)), &signatureC)
 	if result != 0 {
 		switch result {
 		case 1:
@@ -133,6 +133,27 @@ func (pk *PublicKey) HexString() string {
 		return "0x"
 	}
 	return hex.EncodeToString(pk.data)
+}
+
+/*
+************************************************************************************************
+ResqueHash implementation
+************************************************************************************************
+*/
+
+// ResqueHashOrders generates hash from orders bytes
+func ResqueHashOrders(orders []byte) *ResqueHash {
+	pointer := C.struct_ZksResqueHash{}
+	rawOrders := C.CBytes(orders)
+	defer C.free(rawOrders)
+	C.rescue_hash_orders((*C.uint8_t)(rawOrders), C.size_t(len(orders)), &pointer)
+	data := unsafe.Pointer(&pointer.data)
+	return &ResqueHash{data: C.GoBytes(data, C.RESCUE_HASH_LEN)}
+}
+
+// GetBytes return resque hash raw bytes
+func (rh *ResqueHash) GetBytes() []byte {
+	return rh.data
 }
 
 /*
